@@ -1,7 +1,11 @@
-from flask import Flask, jsonify, render_template, request
+from pathlib import Path
+
+from flask import Flask, jsonify, request, send_from_directory
 from scheduler import Process, simulate
 
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
+app = Flask(__name__)
 
 
 def parse_payload(payload):
@@ -42,7 +46,12 @@ def parse_payload(payload):
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+
+@app.get("/assets/<path:filename>")
+def assets(filename):
+    return send_from_directory(FRONTEND_DIR, filename)
 
 
 @app.post("/api/simulate")
