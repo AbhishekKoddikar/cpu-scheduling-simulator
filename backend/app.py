@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
-from scheduler import Process, simulate
+from backend.scheduler import Process, simulate
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
