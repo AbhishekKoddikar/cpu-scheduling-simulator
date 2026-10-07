@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CPU Scheduling Algorithm Simulator</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <main class="container">
+    <header class="hero">
+      <div>
+        <span class="eyebrow">OPERATING SYSTEMS • CPU SCHEDULING LAB</span>
+        <h1>CPU Scheduling <span>Simulator</span></h1>
+        <p>Compare FCFS, SJF, Round Robin and Priority scheduling with live Gantt charts, timing metrics and an automatic performance comparison.</p>
+      </div>
+      <div class="status"><i></i> Simulation engine ready</div>
+    </header>
+
+    <section class="card controls">
+      <div class="section-head"><div><h2>1. Define processes</h2><p>Enter arrival time, burst time and priority. Lower priority number = higher priority.</p></div><button id="sampleBtn" class="ghost">Load sample</button></div>
+      <div class="toolbar"><label>Round Robin quantum <input id="quantum" type="number" min="1" value="2"></label><button id="addBtn" class="secondary">+ Add process</button><button id="runBtn" class="primary">Run all algorithms →</button></div>
+      <div class="table-wrap"><table id="processTable"><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Priority</th><th></th></tr></thead><tbody></tbody></table></div>
+      <div id="error" class="error" hidden></div>
+    </section>
+
+    <section id="results" hidden>
+      <div class="section-title"><span class="eyebrow">RESULTS</span><h2>Algorithm comparison</h2><p>Lower average waiting and turnaround time generally indicate better responsiveness for this workload.</p></div>
+      <div id="comparisonCards" class="metrics"></div>
+      <div class="card comparison-card"><div class="section-head"><div><h2>Comparison table</h2><p>All values are measured in CPU time units.</p></div></div><div class="table-wrap"><table id="comparisonTable"><thead><tr><th>Algorithm</th><th>Avg. Waiting Time</th><th>Avg. Turnaround Time</th><th>Makespan</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="charts" id="charts"></div>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

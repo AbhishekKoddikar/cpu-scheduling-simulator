@@ -1,0 +1,15 @@
+const tbody=document.querySelector('#processTable tbody');
+const sample=[['P1',0,7,2],['P2',2,4,1],['P3',4,1,3],['P4',5,4,2]];
+function addRow(v=['P'+(tbody.children.length+1),0,1,1]){const tr=document.createElement('tr');tr.innerHTML=`<td><input class="process-input pid" value="${v[0]}"></td><td><input class="process-input" type="number" min="0" value="${v[1]}"></td><td><input class="process-input" type="number" min="1" value="${v[2]}"></td><td><input class="process-input" type="number" value="${v[3]}"></td><td><button class="delete">Remove</button></td>`;tr.querySelector('.delete').onclick=()=>{tr.remove();renumber()};tbody.appendChild(tr)}
+function renumber(){}
+function loadSample(){tbody.innerHTML='';sample.forEach(addRow)}
+loadSample();
+document.querySelector('#sampleBtn').onclick=loadSample;
+document.querySelector('#addBtn').onclick=()=>addRow();
+function val(el){return el.value.trim()}
+function payload(){return {quantum:Number(document.querySelector('#quantum').value),processes:[...tbody.rows].map((r,i)=>({pid:val(r.cells[0].querySelector('input'))||`P${i+1}`,arrival:Number(r.cells[1].querySelector('input').value),burst:Number(r.cells[2].querySelector('input').value),priority:Number(r.cells[3].querySelector('input').value)}))}}
+function fmt(n){return Number(n).toFixed(2)}
+function colors(pid){if(pid==='IDLE')return '#26364b';let h=0;for(let c of pid)h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 65% 50%)`}
+function ganttHTML(name,data){const max=data.makespan||1;const blocks=data.gantt.map(s=>`<div class="block" style="width:${s.duration/max*100}%;background:${colors(s.pid)}" title="${s.pid}: ${s.start} → ${s.end}">${s.pid}<span>${s.start}–${s.end}</span></div>`).join('');return `<div class="chart-card"><h3>${name}</h3><p>Gantt chart • makespan ${data.makespan}</p><div class="gantt"><div class="gantt-row">${blocks}</div><div class="axis"><span>0</span><span>${data.makespan}</span></div></div></div>`}
+function render(result){document.querySelector('#results').hidden=false;const comp=result.comparison;document.querySelector('#comparisonCards').innerHTML=comp.map(x=>`<div class="metric"><div class="name">${x.algorithm}</div><div class="value">${fmt(x.average_waiting_time)}</div><small>avg waiting • TAT ${fmt(x.average_turnaround_time)}</small></div>`).join('');document.querySelector('#comparisonTable tbody').innerHTML=comp.map(x=>`<tr><td><strong>${x.algorithm}</strong></td><td>${fmt(x.average_waiting_time)}</td><td>${fmt(x.average_turnaround_time)}</td><td>${x.makespan}</td></tr>`).join('');document.querySelector('#charts').innerHTML=Object.entries(result.results).map(([n,d])=>ganttHTML(n,d)).join('')}
+document.querySelector('#runBtn').onclick=async()=>{const err=document.querySelector('#error');err.hidden=true;try{const r=await fetch('/api/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});const data=await r.json();if(!r.ok)throw new Error(data.error||'Simulation failed');render(data)}catch(e){err.textContent=e.message;err.hidden=false}};
